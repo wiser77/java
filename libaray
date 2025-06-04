@@ -1,0 +1,130 @@
+package AWT;
+
+import java.awt.*;
+import java.awt.event.*;
+import java.sql.*;
+import java.util.Vector;
+
+public class AWTsamplelib extends Frame implements ActionListener {
+	TextField tfTitle, tfAuthor, tfYear, tfSearch;
+	TextArea taDisplay;
+	Button btnAdd, btnDisplay, btnSearch;
+	Connection con;
+
+	AWTsamplelib() {
+		setTitle("Library Management");
+		setSize(500, 500);
+		setLayout(new FlowLayout());
+		add(new Label("Title:"));
+		tfTitle = new TextField(40);
+		add(tfTitle);
+		add(new Label("Author:"));
+		tfAuthor = new TextField(40);
+		add(tfAuthor);
+		add(new Label("Year:"));
+		tfYear = new TextField(10);
+		add(tfYear);
+		btnAdd = new Button("Add Book");
+		btnAdd.addActionListener(this);
+		add(btnAdd);
+		btnDisplay = new Button("Display All Books");
+		btnDisplay.addActionListener(this);
+		add(btnDisplay);
+		add(new Label("Search Title:"));
+		tfSearch = new TextField(30);
+		add(tfSearch);
+		btnSearch = new Button("Search Book");
+		btnSearch.addActionListener(this);
+		add(btnSearch);
+		taDisplay = new TextArea(15, 60);
+		add(taDisplay);
+
+		connectDatabase();
+
+		addWindowListener(new WindowAdapter() {
+			public void windowClosing(WindowEvent we) {
+				try {
+					if (con != null)
+						con.close();
+				} catch (Exception e) {
+				}
+				System.exit(0);
+			}
+		});
+		setVisible(true);
+	}
+
+	void connectDatabase() {
+		try {
+			Class.forName("com.mysql.cj.jdbc.Driver");
+			con = DriverManager.getConnection("jdbc:mysql://localhost:3306/LibraryDB", "root", "susma1234");
+		} catch (Exception e) {
+			taDisplay.setText("Database Connection Failed: " + e.getMessage());
+		}
+	}
+
+	public void actionPerformed(ActionEvent ae) {
+		if (ae.getSource() == btnAdd) {
+			addBook();
+		} else if (ae.getSource() == btnDisplay) {
+			displayBooks();
+		} else if (ae.getSource() == btnSearch) {
+			searchBook();
+		}
+	}
+
+	void addBook() {
+		try {
+			String sql = "INSERT INTO books (title, author, year) VALUES (?, ?, ?)";
+			PreparedStatement ps = con.prepareStatement(sql);
+			ps.setString(1, tfTitle.getText());
+			ps.setString(2, tfAuthor.getText());
+			ps.setInt(3, Integer.parseInt(tfYear.getText()));
+			int rows = ps.executeUpdate();
+			taDisplay.setText(rows + " book(s) added.");
+			tfTitle.setText("");
+			tfAuthor.setText("");
+			tfYear.setText("");
+		} catch (Exception e) {
+			taDisplay.setText("Error adding book: " + e.getMessage());
+		}
+	}
+
+	void displayBooks() {
+		try {
+			Statement st = con.createStatement();
+			ResultSet rs = st.executeQuery("SELECT * FROM books");
+			StringBuilder sb = new StringBuilder();
+			while (rs.next()) {
+				sb.append("ID: ").append(rs.getInt("id")).append(", Title: ").append(rs.getString("title"))
+						.append(", Author: ").append(rs.getString("author")).append(", Year: ")
+						.append(rs.getInt("year")).append("\n");
+			}
+			taDisplay.setText(sb.toString());
+		} catch (Exception e) {
+			taDisplay.setText("Error displaying books: " + e.getMessage());
+		}
+	}
+
+	void searchBook() {
+		try {
+			String sql = "SELECT * FROM books WHERE title LIKE ?";
+			PreparedStatement ps = con.prepareStatement(sql);
+			ps.setString(1, "%" + tfSearch.getText() + "%");
+			ResultSet rs = ps.executeQuery();
+			StringBuilder sb = new StringBuilder();
+			while (rs.next()) {
+				sb.append("ID: ").append(rs.getInt("id")).append(", Title: ").append(rs.getString("title"))
+						.append(", Author: ").append(rs.getString("author")).append(", Year: ")
+						.append(rs.getInt("year")).append("\n");
+			}
+			taDisplay.setText(sb.length() > 0 ? sb.toString() : "No books found.");
+		} catch (Exception e) {
+			taDisplay.setText("Search failed: " + e.getMessage());
+		}
+	}
+
+	public static void main(String[] args) {
+		new AWTsamplelib();
+	}
+}
