@@ -3,7 +3,7 @@ import java.rmi.*;
 public class MyClient {
     public static void main(String[] args) {
         try {
-            Adder stub = (Adder) Naming.lookup("rmi://localhost:5000/varun");
+            Adder stub = (Adder) Naming.lookup("rmi://localhost:5000/");
             System.out.println("Addition: " + stub.add(34, 4));
             System.out.println("Subtraction: " + stub.sub(34, 4));
             System.out.println("Multiplication: " + stub.mul(34, 4));
