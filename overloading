@@ -1,0 +1,34 @@
+import java.io.*;
+ 
+class function {
+	private int a,b,c;
+	
+	function(){
+		a=10;
+		b=20;
+		c=a+b;
+	}
+	
+	function(int x,int y){
+		a=x;
+		b=y;
+		c=a+b;
+	}
+	
+	public void display() {
+		System.out.println("total=" + c);
+	}
+}
+
+public class overload {
+
+	public static void main(String[] args) {
+		
+        function obj = new function();
+        obj.display();
+        
+        function obj2 = new function(25,48);
+        obj2.display();
+	}
+
+}
