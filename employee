@@ -1,0 +1,103 @@
+import java.awt.*;
+import java.awt.event.*;
+
+public class layout extends Frame {
+
+    Button b1, b2, b3, b4, b5, b6;
+
+    public layout() {
+        setLayout(new BorderLayout());
+
+        Label l1 = new Label("Employee Information", Label.CENTER);
+        l1.setFont(new Font("Arial", Font.BOLD, 20));
+        l1.setBackground(new Color(173, 216, 230)); 
+        add(l1, BorderLayout.NORTH);
+
+       
+        Panel panel1 = new Panel(new GridLayout(6, 2));
+        panel1.setBackground(new Color(240, 255, 240));
+
+        Label l2 = new Label("EMPLOYEE ID");
+        Label l3 = new Label("EMPLOYEE NAME");
+        Label l4 = new Label("EMPLOYEE DATE OF BIRTH");
+        Label l5 = new Label("DEPARTMENT");
+        Label l6 = new Label("GENDER");
+        Label l7 = new Label("EMPLOYEE LOCATION");
+
+        TextField t1 = new TextField(6);
+        TextField t2 = new TextField(26);
+        TextField t3 = new TextField(20);
+
+        Choice c1 = new Choice();
+        c1.add("SELECT");
+        c1.add("Manufacturing");
+        c1.add("Marketing");
+        c1.add("Sales");
+
+        CheckboxGroup cg = new CheckboxGroup();
+        Checkbox ch1 = new Checkbox("Male", cg, true);
+        Checkbox ch2 = new Checkbox("Female", cg, false);
+
+        Panel panel3 = new Panel();
+        panel3.setBackground(new Color(255, 228, 225)); 
+        panel3.add(ch1);
+        panel3.add(ch2);
+
+        Choice t4 = new Choice();
+        t4.add("Select Any District");
+        t4.add("Coimbatore");
+        t4.add("Chennai");
+        t4.add("Erode");
+        t4.add("Salem");
+        t4.add("Tiruppur");
+        t4.add("Theni");
+        t4.add("Hosur");
+        t4.add("Dharmapuri");
+        t4.add("Krishnagiri");
+        t4.add("Tirupathur");
+        t4.add("Vellore");
+
+        panel1.add(l2); panel1.add(t1);
+        panel1.add(l3); panel1.add(t2);
+        panel1.add(l4); panel1.add(t3);
+        panel1.add(l5); panel1.add(c1);
+        panel1.add(l6); panel1.add(panel3);
+        panel1.add(l7); panel1.add(t4);
+
+        add(panel1, BorderLayout.CENTER);
+
+      
+        Panel panel2 = new Panel();
+        panel2.setBackground(new Color(255, 250, 205)); 
+
+        b1 = new Button("New");
+        b2 = new Button("Edit");
+        b3 = new Button("Delete");
+        b4 = new Button("View");
+        b5 = new Button("Exit");
+        b6 = new Button("Convert To ExcelSheet");
+
+        panel2.add(b1);
+        panel2.add(b2);
+        panel2.add(b3);
+        panel2.add(b4);
+        panel2.add(b5);
+        panel2.add(b6);
+
+        add(panel2, BorderLayout.SOUTH);
+
+       
+        addWindowListener(new WindowAdapter() {
+            public void windowClosing(WindowEvent e) {
+                dispose();
+            }
+        });
+    }
+
+    public static void main(String args[]) {
+        layout frame = new layout();
+        frame.setSize(600, 400);
+        frame.setTitle("Employee Form");
+        frame.setVisible(true);
+    }
+}
