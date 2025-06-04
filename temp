@@ -1,0 +1,65 @@
+import java.awt.*;
+import java.awt.event.*;
+
+public class temperature extends Frame implements ActionListener {
+
+    Button btn1 = new Button("Fahrenheit to Celsius");
+    Button btn2 = new Button("Celsius to Fahrenheit");
+    Button btn3 = new Button("Clear");
+
+    TextField txt1 = new TextField(30);
+    TextField txt2 = new TextField(30);
+
+    public temperature() {
+        setLayout(new FlowLayout());
+
+        add(txt1);
+        add(txt2);
+        add(btn2);
+        add(btn1);
+        add(btn3);
+
+        btn3.addActionListener(this);
+        btn2.addActionListener(this);
+        btn1.addActionListener(this);
+
+        setSize(300, 200);
+        setTitle("Temperature Converter");
+        setVisible(true);
+
+        addWindowListener(new WindowAdapter() {
+            public void windowClosing(WindowEvent e) {
+                dispose();
+            }
+        });
+    }
+
+    public void actionPerformed(ActionEvent e) {
+        if ((e.getActionCommand()).equals("Celsius to Fahrenheit")) {
+            try {
+                float temp = Float.parseFloat(txt1.getText());
+                txt2.setText("" + (temp * 1.8 + 32));
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+        }
+
+        if ((e.getActionCommand()).equals("Fahrenheit to Celsius")) {
+            try {
+                float temp = Float.parseFloat(txt1.getText());
+                txt2.setText("" + ((temp - 32) / 1.8));
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+        }
+
+        if ((e.getActionCommand()).equals("Clear")) {
+            txt1.setText("");
+            txt2.setText("");
+        }
+    }
+
+    public static void main(String args[]) {
+        new temperature();
+    }
+}
