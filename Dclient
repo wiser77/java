@@ -1,0 +1,32 @@
+import java.net.*;
+import java.io.*;
+
+public class Dclient {
+    public static DatagramSocket ds;
+    static byte[] b = new byte[225];
+    static int c_port = 1000, s_port = 789;
+
+    public static void main(String args[]) {
+        try {
+            ds = new DatagramSocket(s_port);
+            System.out.println("It is waiting...");
+
+            while (true) {
+                DatagramPacket dp = new DatagramPacket(b, b.length);
+                ds.receive(dp);
+                String msg = new String(dp.getData(), 0, dp.getLength());
+
+                if (msg.equals("end")) {
+                    break;
+                } else {
+                    System.out.println("Received: " + msg);
+                }
+            }
+
+            ds.close(); 
+            
+        } catch (Exception e) {
+            System.out.println("Error: " + e);
+        }
+    }
+}
