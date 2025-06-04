@@ -1,0 +1,86 @@
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.*;
+import java.sql.*;
+
+public class swing extends JFrame implements ActionListener {
+    JLabel l1, l2, l3;
+    JTextField t1;
+    JPasswordField t2;
+    JButton b;
+    swing() {
+        setTitle("Login Form");
+        setSize(350, 250);
+        setLayout(null);
+
+        l1 = new JLabel("Username:");
+        l1.setBounds(50, 50, 80, 30);
+        l2 = new JLabel("Password:");
+        l2.setBounds(50, 100, 80, 30);
+        l3 = new JLabel("");
+        l3.setBounds(50, 180, 250, 30);
+
+        t1 = new JTextField();
+        t1.setBounds(150, 50, 130, 30);
+
+        t2 = new JPasswordField();
+        t2.setBounds(150, 100, 130, 30);
+
+        b = new JButton("Login");
+        b.setBounds(100, 150, 100, 30);
+        b.addActionListener(this);
+
+        add(l1);
+        add(l2);
+        add(l3);
+        add(t1);
+        add(t2);
+        add(b);
+
+        setVisible(true);
+    }
+    
+    
+
+    public void actionPerformed(ActionEvent e) {
+        String username = t1.getText();
+        String password = new String(t2.getPassword());
+
+        if (validateLogin(username, password)) {
+            l3.setText("Login Successful!");
+            l3.setForeground(Color.GREEN);
+        } else {
+            l3.setText("Invalid Credentials!");
+            l3.setForeground(Color.RED);
+        }
+    }
+
+    public boolean validateLogin(String username, String password) {
+        boolean isValid = false;
+        try {
+            Class.forName("com.mysql.cj.jdbc.Driver"); 
+            Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/student", "root", "snsmca");
+
+            String sql = "SELECT * FROM users WHERE username=? AND password=?";
+            PreparedStatement pst = con.prepareStatement(sql);
+            pst.setString(1, username);
+            pst.setString(2, password);
+
+            ResultSet rs = pst.executeQuery();
+            if (rs.next()) {
+                isValid = true;
+            }
+
+            rs.close();
+            pst.close();
+            con.close();
+        } catch (Exception ex) {
+            System.out.println("Database error: " + ex.getMessage());
+        }
+        return isValid;
+    }
+
+    public static void main(String[] args) {
+        new swing();
+    }
+}
