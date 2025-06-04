@@ -1,0 +1,70 @@
+//Expenditure
+
+package Employee;
+import java.io.*;
+
+public class Expenditure {
+public static int sum;
+int med,travel,phone,grosary;
+public int cal() {
+	med=500;
+	travel=200;
+	grosary=1500;
+	phone=300;
+	sum=med+travel+phone+grosary;
+	return sum;
+}
+public void disp()
+{
+	System.out.println("\n\t Expenditure");
+	System.out.println("Medical:"+med);
+	System.out.println("Travel:"+travel);
+	System.out.println("Phone:"+phone);
+	System.out.println("Grosary:"+grosary);
+}
+}
+
+//Income
+
+package Employee;
+import java.io.*;
+public class Income {
+int sal,rent,intrest;
+public int get() {
+	sal=5000;
+	rent=1200;
+	intrest=400;
+	return sal+rent+intrest;
+}
+public void disp()
+{
+	System.out.println("\n\t Income");
+	System.out.println("Salary:"+sal);
+	System.out.println("Rent:"+rent);
+	System.out.println("Intrest:"+intrest);
+}
+}
+
+//pack
+
+package Employee;
+import java.io.*;
+import Employee.*;
+
+public class Pack {
+
+	public static void main(String[] args) throws IOException {
+		int x,y;
+		Income i=new Income();
+x=i.get();
+Expenditure e=new Expenditure();
+y=e.cal();
+i.disp();
+e.disp();
+System.out.println("\n\t Income of the Family");
+System.out.println("Income:"+x);
+System.out.println("Expense:"+y);
+System.out.println("Saving:"+(x-y));
+	}
+
+}
