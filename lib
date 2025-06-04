@@ -1,0 +1,175 @@
+import java.awt.*;
+import java.awt.event.*;
+import java.sql.*;
+
+public class lib extends Frame implements ActionListener {
+
+    TextField tfTitle, tfAuthor, tfYear, tfSearch;
+    TextArea taDisplay;
+    Button btnInsert, btnDisplay, btnSearch;
+
+    public lib() {
+
+        setTitle("Library Management");
+        setSize(550, 650);
+        setLayout(null);
+        setVisible(true);
+
+        Label l1 = new Label("Title:");
+        l1.setBounds(50, 50, 80, 30);
+        add(l1);
+
+        Label l2 = new Label("Author:");
+        l2.setBounds(50, 100, 80, 30);
+        add(l2);
+
+        Label l3 = new Label("Year:");
+        l3.setBounds(50, 150, 80, 30);
+        add(l3);
+
+        Label l4 = new Label("Search:");
+        l4.setBounds(50, 200, 80, 30);
+        add(l4);
+
+        tfTitle = new TextField();
+        tfTitle.setBounds(150, 50, 200, 30);
+        add(tfTitle);
+
+        tfAuthor = new TextField();
+        tfAuthor.setBounds(150, 100, 200, 30);
+        add(tfAuthor);
+
+        tfYear = new TextField();
+        tfYear.setBounds(150, 150, 200, 30);
+        add(tfYear);
+
+        tfSearch = new TextField();
+        tfSearch.setBounds(150, 200, 200, 30);
+        add(tfSearch);
+
+        btnInsert = new Button("Insert Book");
+        btnInsert.setBounds(50, 250, 100, 30);
+        btnInsert.addActionListener(this);
+        add(btnInsert);
+
+        btnDisplay = new Button("Display Book");
+        btnDisplay.setBounds(160, 250, 100, 30);
+        btnDisplay.addActionListener(this);
+        add(btnDisplay);
+
+        btnSearch = new Button("Search Book");
+        btnSearch.setBounds(270, 250, 100, 30);
+        btnSearch.addActionListener(this);
+        add(btnSearch);
+
+      
+        taDisplay = new TextArea();
+        taDisplay.setBounds(50, 300, 450, 200);
+        add(taDisplay);
+
+        addWindowListener(new WindowAdapter() {
+            public void windowClosing(WindowEvent we) {
+                dispose();
+            }
+        });
+    }
+
+    public void actionPerformed(ActionEvent e) {
+        if (e.getSource() == btnInsert) {
+            addBook();
+        }
+        else if(e.getSource() == btnDisplay) {
+                 
+        		display();
+             }
+        else if (e.getSource() == btnSearch) {
+            search();
+        }
+
+        }
+    
+
+    void addBook() {
+        try {
+            Class.forName("com.mysql.cj.jdbc.Driver");
+            Connection con = DriverManager.getConnection(
+                "jdbc:mysql://localhost:3306/libararydb", "root", "snsmca");
+            String sql = "INSERT INTO books (title,author,year) VALUES (?,?,?)";
+            PreparedStatement ps = con.prepareStatement(sql);
+            ps.setString(1, tfTitle.getText());
+            ps.setString(2, tfAuthor.getText());
+            ps.setInt(3, Integer.parseInt(tfYear.getText()));
+            int rows = ps.executeUpdate();
+            taDisplay.setText(rows + " book(s) added.");
+            tfTitle.setText("");
+            tfAuthor.setText("");
+            tfYear.setText("");
+        } catch (Exception e) {
+            taDisplay.setText("Error adding book: " + e.getMessage());
+        }
+    }
+    
+    void display() {
+    	try {
+    		
+    		 Class.forName("com.mysql.cj.jdbc.Driver");
+	         Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/libararydb", "root", "snsmca");
+	         String sql = "SELECT * FROM books";
+	         Statement smt = con.createStatement(); 
+    		 ResultSet rs = smt.executeQuery(sql);
+    		 StringBuilder sb = new StringBuilder();
+    		 while(rs.next()) {
+    			 sb.append("ID: ").append(rs.getInt("id"));
+    			 sb.append(", Title: ").append(rs.getString("title"));
+    			 sb.append(", Author: ").append(rs.getString("author"));
+    			 sb.append(", Year: ").append(rs.getInt("year"));
+    			 sb.append("\n");
+    		 }
+    		 
+    		 taDisplay.setText(sb.toString());
+    		 con.close();
+    	}
+    	catch(Exception e) {
+    		taDisplay.setText("Error found in Displaying the books." + e.getMessage());
+    	}
+    	
+    	
+    }
+    
+    void search() {
+        try {
+            Class.forName("com.mysql.cj.jdbc.Driver");
+            Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/libararydb", "root", "snsmca");
+
+            String sql = "SELECT * FROM books WHERE title LIKE ?";
+            PreparedStatement ps = con.prepareStatement(sql);
+            ps.setString(1, "%" + tfSearch.getText() + "%");  
+
+            ResultSet rs = ps.executeQuery();
+
+            StringBuilder sb = new StringBuilder();
+            while (rs.next()) {
+                sb.append("ID: ").append(rs.getInt("id"));
+                sb.append(", Title: ").append(rs.getString("title"));
+                sb.append(", Author: ").append(rs.getString("author"));
+                sb.append(", Year: ").append(rs.getInt("year"));
+                sb.append("\n");
+            }
+
+            if (sb.length() == 0) {
+                taDisplay.setText("No books found with the title: " + tfSearch.getText());
+            } else {
+                taDisplay.setText(sb.toString());
+            }
+
+            con.close();
+        } catch (Exception e) {
+            taDisplay.setText("Error during search: " + e.getMessage());
+        }
+    }
+
+
+    public static void main(String[] args) {
+        new lib();
+    }
+}
